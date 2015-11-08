@@ -68,6 +68,14 @@ public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 	protected void setLocation(Location l) {
 		this.location = l;
 	}
+	
+	protected void setImage(ImageIcon i){
+	    this.image = i;
+	}
+	
+	protected void setAI(AI ai){
+	    this.ai = ai;
+	}
 
 	@Override
 	public int getCoolDownPeriod() {
@@ -136,6 +144,7 @@ public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 
 	@Override
 	public boolean isDead() {
+	    this.isDead = true;
 		return this.energy <= 0;
 	}
 
