@@ -75,31 +75,38 @@ public abstract class Vehicle implements MoveableItem, Actor {
         this.heading = d;
     }
 
-    protected void vehicleTotalled() {
-        this.isDead = true;
-    }
-
     /**
      * Must be between MAX_DECELERATION and MAX_ACCELERATION
      * 
      * @param a
      */
-    protected void setAcceleration(int a) {
+    public void setAcceleration(int a) {
         this.acceleration = a;
         if (acceleration > MAX_ACCELERATION)
             acceleration = MAX_ACCELERATION;
         if (acceleration < MAX_DECELERATION)
             acceleration = MAX_DECELERATION;
     }
-
-    protected void setSpeed() {
+    /**
+     * Changes the speed due to acceleration or deceleration up to
+     * MAX_SPEED and not below 0.
+     */
+    public void setSpeed() {
         this.speed += acceleration;
         if (speed > this.MAX_SPEED)
             speed = MAX_SPEED;
         else if (speed < 0)
             speed = 0;
     }
-
+    
+    
+    public void crash(){
+        this.loseFuel(this.getFuelLevel()/2);
+        this.acceleration = 0;
+        this.speed = 0;
+    }
+    
+    
     /**
      * Causes the vehicle to brake, which means its acceleration becomes
      * negative and it begins to lose speed
@@ -108,7 +115,7 @@ public abstract class Vehicle implements MoveableItem, Actor {
      */
     public int brake() {
         this.acceleration = MAX_DECELERATION;
-        this.speed += acceleration;
+        setSpeed();
         return speed;
     }
 
@@ -165,7 +172,6 @@ public abstract class Vehicle implements MoveableItem, Actor {
     @Override
     public Command getNextAction(World world) {
         Command nextAction = ai.getNextAction(world, this);
-        this.fuelLevel--; // Loses 1 unit of fuel regardless of action.
         return nextAction;
     }
 
@@ -187,9 +193,13 @@ public abstract class Vehicle implements MoveableItem, Actor {
     public boolean isDead() {
         return isDead;
     }
-
+    /**
+     * Loses fuel. If fuelLoss is less than 0, fuel will stay the same.
+     * @param fuelLoss
+     */
     public void loseFuel(int fuelLoss) {
-        this.fuelLevel = this.fuelLevel - fuelLoss;
+        if(fuelLoss > 0)
+            this.fuelLevel = this.fuelLevel - fuelLoss;
     }
 
     @Override
@@ -204,4 +214,16 @@ public abstract class Vehicle implements MoveableItem, Actor {
     public int getAcceleration() {
         return this.acceleration;
     }
+    
+    public void loseEnergy(int energy){
+        this.isDead = true;
+    }
+    /**
+     * Turns the vehicle. Must have speed <=2.
+     * @param direction
+     */
+    public void turn(Direction direction) {
+        this.heading = direction;  
+    }
+   
 }

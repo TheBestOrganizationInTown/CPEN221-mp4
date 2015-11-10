@@ -1,27 +1,27 @@
 package ca.ubc.ece.cpen221.mp4.commands.vehicleCommands;
 
-import ca.ubc.ece.cpen221.mp4.Location;
-import ca.ubc.ece.cpen221.mp4.Util;
+import ca.ubc.ece.cpen221.mp4.Direction;
 import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.InvalidCommandException;
-import ca.ubc.ece.cpen221.mp4.commands.MoveCommand;
-import ca.ubc.ece.cpen221.mp4.items.MoveableItem;
 import ca.ubc.ece.cpen221.mp4.items.vehicles.Vehicle;
 
-public class BrakeCommand implements Command {
+public class TurnCommand implements Command {
     private final Vehicle vehicle;
-
+    private final Direction direction;
     /**
-     * Construct a {@link BrakeCommand}, where <code>vehicle</code> is the
-     * braking vehicle. 
+     * Construct a {@link TurnCommand}, where <code>vehicle</code> is the
+     * turning vehicle. Must have speed <= 2.
      *
      * @param vehicle
-     *            the vehicle that is braking
+     *            the vehicle that is turning
+     * @param direction
+     *              the direction to turn          
      * 
      */
-    public BrakeCommand(Vehicle vehicle) {
-        this.vehicle = vehicle;
+    public TurnCommand(Vehicle vehicle, Direction direction) {
+        this.vehicle = vehicle;   
+        this.direction = direction;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class BrakeCommand implements Command {
             return;
         }
 
-        this.vehicle.brake();
+        this.vehicle.turn(direction);
         if (this.vehicle.getSpeed() > 0) {
             DriveCommand continueDriving = new DriveCommand(vehicle);
             continueDriving.execute(world);
@@ -40,3 +40,5 @@ public class BrakeCommand implements Command {
     }
 
 }
+
+

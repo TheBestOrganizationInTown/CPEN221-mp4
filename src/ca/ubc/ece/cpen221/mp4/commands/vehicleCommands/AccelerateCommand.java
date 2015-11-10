@@ -1,27 +1,25 @@
 package ca.ubc.ece.cpen221.mp4.commands.vehicleCommands;
 
-import ca.ubc.ece.cpen221.mp4.Location;
-import ca.ubc.ece.cpen221.mp4.Util;
+import ca.ubc.ece.cpen221.mp4.Direction;
 import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.InvalidCommandException;
-import ca.ubc.ece.cpen221.mp4.commands.MoveCommand;
-import ca.ubc.ece.cpen221.mp4.items.MoveableItem;
 import ca.ubc.ece.cpen221.mp4.items.vehicles.Vehicle;
 
-public class BrakeCommand implements Command {
+public class AccelerateCommand implements Command {
     private final Vehicle vehicle;
-
+    private final int increase;
     /**
-     * Construct a {@link BrakeCommand}, where <code>vehicle</code> is the
-     * braking vehicle. 
+     * Construct a {@link AccelerateCommand}, where <code>vehicle</code> is the
+     * accelerating vehicle. 
      *
      * @param vehicle
-     *            the vehicle that is braking
+     *            the vehicle that is accelerating         
      * 
      */
-    public BrakeCommand(Vehicle vehicle) {
-        this.vehicle = vehicle;
+    public AccelerateCommand(Vehicle vehicle, int increase) {
+        this.vehicle = vehicle; 
+        this.increase = increase;
     }
 
     @Override
@@ -30,13 +28,11 @@ public class BrakeCommand implements Command {
         if (vehicle.isDead()) {
             return;
         }
-
-        this.vehicle.brake();
-        if (this.vehicle.getSpeed() > 0) {
+        this.vehicle.setAcceleration(increase);
+        if (this.vehicle.getSpeed()+this.vehicle.getAcceleration() > 0) {
             DriveCommand continueDriving = new DriveCommand(vehicle);
             continueDriving.execute(world);
         }
 
-    }
 
-}
+}}
