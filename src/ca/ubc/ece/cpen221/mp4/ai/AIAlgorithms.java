@@ -35,27 +35,41 @@ public class AIAlgorithms {
 
     public Location getFurthestMoveableLocation(Location otherLocation, Location currentLocation) {
         Location furthestLocation;
-        Location North = new Location(currentLocation.getX(), currentLocation.getY() - 1);
-        Location South = new Location(currentLocation.getX(), currentLocation.getY() + 1);
-        Location West = new Location(currentLocation.getX() - 1, currentLocation.getY());
-        Location East = new Location(currentLocation.getX() + 1, currentLocation.getY());
+        List<Location> locations = getSurroundingFourLocations(currentLocation);
+        List<Location> randomizedLocations = new LinkedList<Location>();
 
-        furthestLocation = checkFurtherLocation(otherLocation, North, South);
-        furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, East);
-        furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, West);
+        while (!locations.isEmpty()) {
+            int LOW = 0;
+            int HIGH = locations.size();
+            Random randomize = new Random();
+
+            int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
+            randomizedLocations.add(locations.remove(randomIndex));
+        }
+        
+        furthestLocation = checkFurtherLocation(otherLocation, randomizedLocations.get(0), randomizedLocations.get(1));
+        furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, randomizedLocations.get(2));
+        furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, randomizedLocations.get(3));
         return furthestLocation;
     }
 
     public Location getClosestMoveableLocation(Location otherLocation, Location currentLocation) {
         Location closestLocation;
-        Location North = new Location(currentLocation.getX(), currentLocation.getY() - 1);
-        Location South = new Location(currentLocation.getX(), currentLocation.getY() + 1);
-        Location West = new Location(currentLocation.getX() - 1, currentLocation.getY());
-        Location East = new Location(currentLocation.getX() + 1, currentLocation.getY());
+        List<Location> locations = getSurroundingFourLocations(currentLocation);
+        List<Location> randomizedLocations = new LinkedList<Location>();
 
-        closestLocation = checkClosestLocation(otherLocation, North, South);
-        closestLocation = checkClosestLocation(otherLocation, closestLocation, East);
-        closestLocation = checkClosestLocation(otherLocation, closestLocation, West);
+        while (!locations.isEmpty()) {
+            int LOW = 0;
+            int HIGH = locations.size();
+            Random randomize = new Random();
+
+            int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
+            randomizedLocations.add(locations.remove(randomIndex));
+        }
+
+        closestLocation = checkClosestLocation(otherLocation, randomizedLocations.get(0), randomizedLocations.get(1));
+        closestLocation = checkClosestLocation(otherLocation, closestLocation, randomizedLocations.get(2));
+        closestLocation = checkClosestLocation(otherLocation, closestLocation, randomizedLocations.get(3));
 
         return closestLocation;
     }
@@ -135,12 +149,14 @@ public class AIAlgorithms {
     }
 
     public Location getRandomLocation(ArenaWorld world, ArenaAnimal animal, List<Location> locations) {
-        int LOW = 0;
         int HIGH = locations.size();
+        int randomIndex = 0;
         Random randomize = new Random();
-
-        int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
-        return locations.get(randomIndex);
+        if (HIGH > 0){
+            randomIndex = randomize.nextInt(HIGH);
+            return locations.get(randomIndex);
+        }
+        return animal.getLocation();
     }
 
     public Location getRandomMoveLocation(ArenaWorld world, ArenaAnimal animal) {
