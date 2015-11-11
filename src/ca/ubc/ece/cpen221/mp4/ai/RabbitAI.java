@@ -29,8 +29,12 @@ public class RabbitAI extends AbstractAI {
     private Location foxLocation;
     private boolean grassFound;
     private boolean shouldBreed;
-    private Item grass;
+    private Item grassToGo;
+    private Item grassToEat;
     private boolean grassAdjacent;
+    private int grassDistance;
+    private int itemDistance;
+    private Location targetLocation;
 
     Set<Item> surroundingItems = new HashSet<Item>();
 
@@ -41,9 +45,9 @@ public class RabbitAI extends AbstractAI {
     public Command getNextAction(ArenaWorld world, ArenaAnimal animal) {
         // TODO: Change this. Implement your own AI rules.
         foxFound = false;
-        grassFound = false;
         shouldBreed = false;
         grassAdjacent = false;
+        grassDistance = 5;
 
         surroundingItems = world.searchSurroundings(animal);
         AIAlgorithms rabbitMind = new AIAlgorithms();
@@ -57,33 +61,43 @@ public class RabbitAI extends AbstractAI {
                 foxLocation = item.getLocation();
             }
             if (item instanceof Grass) {
-                grassFound = true;
-                grass = item;
+                itemDistance = rabbitMind.getDistance(animal.getLocation(), item.getLocation());
+                if (itemDistance < grassDistance) {
+                    grassFound = true;
+                    grassToGo = item;
+                    grassDistance = itemDistance;
+                }
             }
             if (item.getLocation().getDistance(animal.getLocation()) == 1 && item instanceof Grass) {
                 grassAdjacent = true;
-                grass = item;
+                grassToEat = item;
             }
-            if (animal.getEnergy() > animal.getMaxEnergy())
+            if (animal.getEnergy() > animal.getMaxEnergy()/2)
                 shouldBreed = true;
         }
 
         if (foxFound) {
             System.out.println("Running");
-            return new MoveCommand(animal, rabbitMind.getFurthestMoveableLocation(foxLocation, animal.getLocation()));
+            targetLocation = rabbitMind.getFurthestMoveableLocation(foxLocation, animal.getLocation());
+            if (rabbitMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
         }
         if (shouldBreed) {
             System.out.println("Breeding");
-            return new BreedCommand(animal,
-                    rabbitMind.getFurthestMoveableLocation(grass.getLocation(), animal.getLocation()));
+            targetLocation = rabbitMind.getFurthestMoveableLocation(grassToEat.getLocation(), animal.getLocation());
+            if (rabbitMind.checkValidity(world, animal, targetLocation))
+                return new BreedCommand(animal, targetLocation);
         }
         if (grassFound && grassAdjacent) {
-            System.out.println("Eating: " + grass);
-            return new EatCommand(animal, grass);
+            System.out.println("Eating");
+            grassFound = false;
+            return new EatCommand(animal, grassToEat);
         }
         if (grassFound && !grassAdjacent) {
             System.out.println("Going to grass");
-            return new MoveCommand(animal, rabbitMind.getClosestMoveableLocation(grass.getLocation(), animal.getLocation()));
+            targetLocation = rabbitMind.getClosestMoveableLocation(grassToGo.getLocation(), animal.getLocation());
+            if (rabbitMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
         }
         System.out.println("Waiting");
         return new WaitCommand();
