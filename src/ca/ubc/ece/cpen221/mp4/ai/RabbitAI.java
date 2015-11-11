@@ -72,7 +72,7 @@ public class RabbitAI extends AbstractAI {
                 grassAdjacent = true;
                 grassToEat = item;
             }
-            if (animal.getEnergy() > animal.getMaxEnergy()/2)
+            if (animal.getEnergy() > animal.getMaxEnergy())
                 shouldBreed = true;
         }
 
@@ -84,7 +84,7 @@ public class RabbitAI extends AbstractAI {
         }
         if (shouldBreed) {
             System.out.println("Breeding");
-            targetLocation = rabbitMind.getFurthestMoveableLocation(grassToEat.getLocation(), animal.getLocation());
+            targetLocation = rabbitMind.getRandomBreedingLocation(world, animal);
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new BreedCommand(animal, targetLocation);
         }

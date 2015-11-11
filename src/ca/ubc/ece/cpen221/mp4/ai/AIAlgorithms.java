@@ -58,39 +58,76 @@ public class AIAlgorithms {
 
         return closestLocation;
     }
-    
-    public List<Location> getPossibleLocations(Location itemLocation){
+
+    public List<Location> getSurroundingLocations(Location itemLocation) {
         List<Location> Locations = new LinkedList<Location>();
         Location North = new Location(itemLocation.getX(), itemLocation.getY() - 1);
         Location South = new Location(itemLocation.getX(), itemLocation.getY() + 1);
         Location West = new Location(itemLocation.getX() - 1, itemLocation.getY());
         Location East = new Location(itemLocation.getX() + 1, itemLocation.getY());
+        Location NEast = new Location(itemLocation.getX() + 1, itemLocation.getY() - 1);
+        Location SEast = new Location(itemLocation.getX() + 1, itemLocation.getY() + 1);
+        Location NWest = new Location(itemLocation.getX() - 1, itemLocation.getY() - 1);
+        Location SWest = new Location(itemLocation.getX() - 1, itemLocation.getY() + 1);
         Locations.add(North);
         Locations.add(South);
         Locations.add(West);
-        Locations.add(East);      
-        
+        Locations.add(East);
+        Locations.add(NEast);
+        Locations.add(SEast);
+        Locations.add(NWest);
+        Locations.add(SWest);
+
         return Locations;
     }
-    
-    public boolean checkValidity(ArenaWorld world, ArenaAnimal animal, Location targetLocation){
+
+    public boolean checkValidity(ArenaWorld world, ArenaAnimal animal, Location targetLocation) {
         boolean isValid = true;
         List<Location> occupiedLocations = new LinkedList<Location>();
         Set<Item> surroundingItems = new HashSet<Item>();
         surroundingItems = world.searchSurroundings(animal);
         Iterator<Item> itemIterator = surroundingItems.iterator();
-        while(itemIterator.hasNext()){
+        while (itemIterator.hasNext()) {
             Item newItem = itemIterator.next();
             occupiedLocations.add(newItem.getLocation());
         }
         Iterator<Location> locationIterator = occupiedLocations.iterator();
-        while(locationIterator.hasNext()){
+        while (locationIterator.hasNext()) {
             Location occupiedLocation = locationIterator.next();
-            if(occupiedLocation.equals(targetLocation))
+            if (occupiedLocation.equals(targetLocation))
                 isValid = false;
         }
-        
+
         return isValid;
+    }
+
+    public List<Location> getValidSurroundingLocations(ArenaWorld world, ArenaAnimal animal) {
+
+        List<Location> surroundingLocations = new LinkedList<Location>(getSurroundingLocations(animal.getLocation()));
+
+        Iterator<Location> locationIterator = surroundingLocations.iterator();
+        while (locationIterator.hasNext()) {
+            Location location = locationIterator.next();
+            if (!checkValidity(world, animal, location))
+                locationIterator.remove();
+        }
+
+        List<Location> validSurroundingLocations = new LinkedList<Location>(surroundingLocations);
+        return validSurroundingLocations;
+    }
+
+    public Location getRandomBreedingLocation(ArenaWorld world, ArenaAnimal animal) {
+        Location breedingLocation;
+        List<Location> surroundingLocations = getValidSurroundingLocations(world, animal);
+
+        int LOW = 0;
+        int HIGH = surroundingLocations.size() - 1;
+        Random randomize = new Random();
+
+        int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
+        
+        breedingLocation = surroundingLocations.get(randomIndex);
+        return breedingLocation;
     }
 
 }
