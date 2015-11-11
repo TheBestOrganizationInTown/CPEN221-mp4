@@ -25,6 +25,7 @@ import ca.ubc.ece.cpen221.mp4.items.animals.Rabbit;
  */
 public class RabbitAI extends AbstractAI {
 
+    private boolean shouldEat;
     private boolean foxFound;
     private Location foxLocation;
     private boolean grassFound;
@@ -35,6 +36,8 @@ public class RabbitAI extends AbstractAI {
     private int grassDistance;
     private int itemDistance;
     private Location targetLocation;
+    private int surroundingRabbits;
+    private Location surroundingRabbitLocation;
 
     Set<Item> surroundingItems = new HashSet<Item>();
 
@@ -46,13 +49,18 @@ public class RabbitAI extends AbstractAI {
         // TODO: Change this. Implement your own AI rules.
         foxFound = false;
         shouldBreed = false;
+        shouldEat = true;
         grassAdjacent = false;
+        surroundingRabbits = 0;
         grassDistance = 5;
 
         surroundingItems = world.searchSurroundings(animal);
         AIAlgorithms rabbitMind = new AIAlgorithms();
 
         Iterator<Item> iterator = surroundingItems.iterator();
+
+        if (animal.getEnergy() > animal.getMaxEnergy() / 2.5)
+            shouldEat = false;
 
         while (iterator.hasNext()) {
             Item item = iterator.next();
@@ -72,12 +80,16 @@ public class RabbitAI extends AbstractAI {
                 grassAdjacent = true;
                 grassToEat = item;
             }
-            if (animal.getEnergy() > animal.getMaxEnergy())
-                shouldBreed = true;
+            if (item instanceof Rabbit) {
+                surroundingRabbits++;
+                surroundingRabbitLocation = item.getLocation();
+            }
         }
 
+        if (animal.getEnergy() > animal.getMaxEnergy() / 3 && surroundingRabbits == 0)
+            shouldBreed = true;
+
         if (foxFound) {
-            System.out.println("Running");
             targetLocation = rabbitMind.getFurthestMoveableLocation(foxLocation, animal.getLocation());
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
@@ -88,18 +100,24 @@ public class RabbitAI extends AbstractAI {
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new BreedCommand(animal, targetLocation);
         }
+        if (!shouldEat && surroundingRabbits > 0) {
+            targetLocation = rabbitMind.getFurthestMoveableLocation(surroundingRabbitLocation, animal.getLocation());
+            if (rabbitMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
+        }
+        if (!shouldEat) {
+            return new WaitCommand();
+        }
         if (grassFound && grassAdjacent) {
-            System.out.println("Eating");
             grassFound = false;
             return new EatCommand(animal, grassToEat);
         }
         if (grassFound && !grassAdjacent) {
-            System.out.println("Going to grass");
             targetLocation = rabbitMind.getClosestMoveableLocation(grassToGo.getLocation(), animal.getLocation());
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
         }
-        System.out.println("Waiting");
-        return new WaitCommand();
+        Location randomLocation = rabbitMind.getRandomMoveLocation(world, animal);
+        return new MoveCommand(animal, randomLocation);
     }
 }

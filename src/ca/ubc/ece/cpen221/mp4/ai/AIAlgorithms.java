@@ -4,6 +4,7 @@ import java.util.*;
 
 import ca.ubc.ece.cpen221.mp4.ArenaWorld;
 import ca.ubc.ece.cpen221.mp4.Location;
+import ca.ubc.ece.cpen221.mp4.Util;
 import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.items.Item;
 import ca.ubc.ece.cpen221.mp4.items.animals.ArenaAnimal;
@@ -59,7 +60,7 @@ public class AIAlgorithms {
         return closestLocation;
     }
 
-    public List<Location> getSurroundingLocations(Location itemLocation) {
+    public List<Location> getSurroundingEightLocations(Location itemLocation) {
         List<Location> Locations = new LinkedList<Location>();
         Location North = new Location(itemLocation.getX(), itemLocation.getY() - 1);
         Location South = new Location(itemLocation.getX(), itemLocation.getY() + 1);
@@ -81,12 +82,27 @@ public class AIAlgorithms {
         return Locations;
     }
 
+    public List<Location> getSurroundingFourLocations(Location itemLocation) {
+        List<Location> Locations = new LinkedList<Location>();
+        Location North = new Location(itemLocation.getX(), itemLocation.getY() - 1);
+        Location South = new Location(itemLocation.getX(), itemLocation.getY() + 1);
+        Location West = new Location(itemLocation.getX() - 1, itemLocation.getY());
+        Location East = new Location(itemLocation.getX() + 1, itemLocation.getY());
+        Locations.add(North);
+        Locations.add(South);
+        Locations.add(West);
+        Locations.add(East);
+
+        return Locations;
+    }
+
     public boolean checkValidity(ArenaWorld world, ArenaAnimal animal, Location targetLocation) {
         boolean isValid = true;
         List<Location> occupiedLocations = new LinkedList<Location>();
         Set<Item> surroundingItems = new HashSet<Item>();
         surroundingItems = world.searchSurroundings(animal);
         Iterator<Item> itemIterator = surroundingItems.iterator();
+        Util.isValidLocation(world, targetLocation);
         while (itemIterator.hasNext()) {
             Item newItem = itemIterator.next();
             occupiedLocations.add(newItem.getLocation());
@@ -96,38 +112,49 @@ public class AIAlgorithms {
             Location occupiedLocation = locationIterator.next();
             if (occupiedLocation.equals(targetLocation))
                 isValid = false;
+            if (!Util.isValidLocation(world, targetLocation))
+                isValid = false;
         }
 
         return isValid;
     }
 
-    public List<Location> getValidSurroundingLocations(ArenaWorld world, ArenaAnimal animal) {
-
-        List<Location> surroundingLocations = new LinkedList<Location>(getSurroundingLocations(animal.getLocation()));
+    public List<Location> getValidSurroundingLocations(ArenaWorld world, ArenaAnimal animal,
+            List<Location> surroundingLocations) {
 
         Iterator<Location> locationIterator = surroundingLocations.iterator();
         while (locationIterator.hasNext()) {
             Location location = locationIterator.next();
             if (!checkValidity(world, animal, location))
                 locationIterator.remove();
+
         }
 
         List<Location> validSurroundingLocations = new LinkedList<Location>(surroundingLocations);
         return validSurroundingLocations;
     }
 
-    public Location getRandomBreedingLocation(ArenaWorld world, ArenaAnimal animal) {
-        Location breedingLocation;
-        List<Location> surroundingLocations = getValidSurroundingLocations(world, animal);
-
+    public Location getRandomLocation(ArenaWorld world, ArenaAnimal animal, List<Location> locations) {
         int LOW = 0;
-        int HIGH = surroundingLocations.size() - 1;
+        int HIGH = locations.size();
         Random randomize = new Random();
 
         int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
-        
-        breedingLocation = surroundingLocations.get(randomIndex);
-        return breedingLocation;
+        return locations.get(randomIndex);
+    }
+
+    public Location getRandomMoveLocation(ArenaWorld world, ArenaAnimal animal) {
+        List<Location> surroundingLocations = getSurroundingFourLocations(animal.getLocation());
+        List<Location> validSurroundingLocations = getValidSurroundingLocations(world, animal, surroundingLocations);
+
+        return getRandomLocation(world, animal, validSurroundingLocations);
+    }
+
+    public Location getRandomBreedingLocation(ArenaWorld world, ArenaAnimal animal) {
+        List<Location> surroundingLocations = getSurroundingEightLocations(animal.getLocation());
+        List<Location> validSurroundingLocations = getValidSurroundingLocations(world, animal, surroundingLocations);
+
+        return getRandomLocation(world, animal, validSurroundingLocations);
     }
 
 }
