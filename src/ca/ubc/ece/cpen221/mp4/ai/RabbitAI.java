@@ -59,9 +59,6 @@ public class RabbitAI extends AbstractAI {
 
         Iterator<Item> iterator = surroundingItems.iterator();
 
-        if (animal.getEnergy() > animal.getMaxEnergy() / 2.5)
-            shouldEat = false;
-
         while (iterator.hasNext()) {
             Item item = iterator.next();
             if (item instanceof Fox) {
@@ -86,10 +83,13 @@ public class RabbitAI extends AbstractAI {
             }
         }
 
-        if (animal.getEnergy() > animal.getMaxEnergy() / 3 && surroundingRabbits == 0)
+        if (animal.getEnergy() == animal.getMaxEnergy())
             shouldBreed = true;
 
-        if (foxFound) {
+        if (surroundingRabbits > 1)
+            shouldEat = false;
+
+        if (foxFound && animal.getLocation().getDistance(foxLocation) < 3) {
             targetLocation = rabbitMind.getFurthestMoveableLocation(foxLocation, animal.getLocation());
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
