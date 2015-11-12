@@ -1,5 +1,6 @@
 package ca.ubc.ece.cpen221.mp4.ai;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.EatCommand;
 import ca.ubc.ece.cpen221.mp4.commands.MoveCommand;
 import ca.ubc.ece.cpen221.mp4.commands.WaitCommand;
+import ca.ubc.ece.cpen221.mp4.items.Grass;
 import ca.ubc.ece.cpen221.mp4.items.Item;
 import ca.ubc.ece.cpen221.mp4.items.animals.*;
 
@@ -20,17 +22,111 @@ import ca.ubc.ece.cpen221.mp4.items.animals.*;
  * Your Fox AI.
  */
 public class FoxAI extends AbstractAI {
-	private int closest = 2; // max number; greater than fox's view range
 
-	public FoxAI() {
+    private boolean shouldEat;
+    private boolean rabbitFound;
+    private Location foxLocation;
+    private boolean shouldBreed;
+    private Item rabbitToGo;
+    private Item rabbitToEat;
+    private boolean rabbitAdjacent;
+    private int rabbitDistance;
+    private int itemDistance;
+    private Location targetLocation;
+    private int surroundingFoxes;
+    private Location surroundingFoxLocation;
+    private int straightMoves;
+    private int tendency;
+    private int newTendency;
 
-	}
+    Set<Item> surroundingItems = new HashSet<Item>();
 
-	@Override
-	public Command getNextAction(ArenaWorld world, ArenaAnimal animal) {
-		// TODO: Change this. Implement your own AI to make decisions regarding
-		// the next action.
-		return new WaitCommand();
-	}
+    public FoxAI() {
+    }
+
+    @Override
+    public Command getNextAction(ArenaWorld world, ArenaAnimal animal) {
+        // TODO: Change this. Implement your own AI to make decisions regarding
+        // the next action.
+        shouldBreed = false;
+        shouldEat = true;
+        rabbitAdjacent = false;
+        surroundingFoxes = 0;
+        rabbitDistance = 5;
+        surroundingItems = world.searchSurroundings(animal);
+        AIAlgorithms foxMind = new AIAlgorithms();
+
+        Iterator<Item> iterator = surroundingItems.iterator();
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            if (item instanceof Rabbit) {
+                itemDistance = foxMind.getDistance(animal.getLocation(), item.getLocation());
+                if (itemDistance < rabbitDistance) {
+                    rabbitFound = true;
+                    rabbitToGo = item;
+                    rabbitDistance = itemDistance;
+                }
+            }
+            if (item.getLocation().getDistance(animal.getLocation()) == 1 && item instanceof Rabbit) {
+                rabbitAdjacent = true;
+                rabbitToEat = item;
+            }
+            if (item instanceof Fox) {
+                surroundingFoxes++;
+                surroundingFoxLocation = item.getLocation();
+            }
+        }
+        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 3)
+            shouldBreed = true;
+
+        if (surroundingFoxes > 3)
+            shouldEat = false;
+        
+        if (shouldBreed) {
+            targetLocation = foxMind.getRandomBreedingLocation(world, animal);
+            if (foxMind.checkValidity(world, animal, targetLocation))
+                return new BreedCommand(animal, targetLocation);
+        }
+        if (rabbitFound && rabbitAdjacent) {
+            rabbitFound = false;
+            System.out.println(animal.getEnergy());
+            return new EatCommand(animal, rabbitToEat);
+        }
+
+        if (rabbitFound && !rabbitAdjacent) {
+            targetLocation = foxMind.getClosestMoveableLocation(rabbitToGo.getLocation(), animal.getLocation());
+            if (foxMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
+        }
+
+        if (straightMoves > 0) {
+            straightMoves--;
+            switch (tendency) {
+            case 0:
+                targetLocation = foxMind.getNorth(animal);
+            case 1:
+                targetLocation = foxMind.getSouth(animal);
+            case 2:
+                targetLocation = foxMind.getEast(animal);
+            case 3:
+                targetLocation = foxMind.getWest(animal);
+
+            }
+            if (foxMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
+        }
+        newTendency--;
+        straightMoves = 4;
+        if (newTendency < 0) {
+            tendency = foxMind.getRandomNumber();
+            newTendency = 5;
+        }
+        Location randomLocation = foxMind.getRandomMoveLocation(world, animal);
+        if (foxMind.checkValidity(world, animal, randomLocation))
+            return new MoveCommand(animal, randomLocation);
+
+        return new WaitCommand();
+    }
 
 }
