@@ -77,7 +77,7 @@ public class FoxAI extends AbstractAI {
                 surroundingFoxLocation = item.getLocation();
             }
         }
-        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 3)
+        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 2)
             shouldBreed = true;
 
         if (surroundingFoxes > 3)
@@ -90,7 +90,6 @@ public class FoxAI extends AbstractAI {
         }
         if (rabbitFound && rabbitAdjacent) {
             rabbitFound = false;
-            System.out.println(animal.getEnergy());
             return new EatCommand(animal, rabbitToEat);
         }
 

@@ -39,6 +39,7 @@ public class RabbitAI extends AbstractAI {
     private int tendency;
     private boolean tendencySet;
     private int newTendency;
+    private int surroundingGrass;
 
     Set<Item> surroundingItems = new HashSet<Item>();
 
@@ -52,6 +53,7 @@ public class RabbitAI extends AbstractAI {
         shouldEat = true;
         grassAdjacent = false;
         surroundingRabbits = 0;
+        surroundingGrass = 0;
         grassDistance = 5;
         surroundingItems = world.searchSurroundings(animal);
         AIAlgorithms rabbitMind = new AIAlgorithms();
@@ -75,6 +77,7 @@ public class RabbitAI extends AbstractAI {
                     grassFound = true;
                     grassToGo = item;
                     grassDistance = itemDistance;
+                    surroundingGrass++;
                 }
             }
             if (item.getLocation().getDistance(animal.getLocation()) == 1 && item instanceof Grass) {
@@ -86,10 +89,10 @@ public class RabbitAI extends AbstractAI {
                 surroundingRabbitLocation = item.getLocation();
             }
         }
-        if (animal.getEnergy() > animal.getMaxEnergy()/2 && surroundingRabbits < 2)
+        if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 2)
             shouldBreed = true;
 
-        if (surroundingRabbits > 2)
+        if (surroundingRabbits > 4 || surroundingGrass < 2)
             shouldEat = false;
 
         if (foxFound && animal.getLocation().getDistance(foxLocation) < 3) {
@@ -108,7 +111,7 @@ public class RabbitAI extends AbstractAI {
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
         }
-        if (grassFound && grassAdjacent) {
+        if (grassFound && grassAdjacent && shouldEat) {
             grassFound = false;
             return new EatCommand(animal, grassToEat);
         }

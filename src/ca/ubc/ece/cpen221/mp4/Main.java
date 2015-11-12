@@ -18,7 +18,7 @@ import ca.ubc.ece.cpen221.mp4.staff.WorldUI;
  */
 public class Main {
 
-	static final int X_DIM = 40;
+	static final int X_DIM = 100;
 	static final int Y_DIM = 40;
 	static final int SPACES_PER_GRASS = 7;
 	static final int INITIAL_GRASS = X_DIM * Y_DIM / SPACES_PER_GRASS;
