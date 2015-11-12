@@ -50,9 +50,12 @@ public class FoxAI extends AbstractAI {
 
         Iterator<Item> iterator = surroundingItems.iterator();
 
+        // Searches the surrounding environment and instantiates variables
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            if (item instanceof Rabbit && ((Rabbit) item).getEnergy() < 20) {
+
+            // Eats rabbits that are weak
+            if (item instanceof Rabbit && ((Rabbit) item).getEnergy() < 30) {
                 itemDistance = foxMind.getDistance(animal.getLocation(), item.getLocation());
                 if (itemDistance < rabbitDistance) {
                     rabbitFound = true;
@@ -65,28 +68,34 @@ public class FoxAI extends AbstractAI {
                 rabbitToEat = item;
             }
         }
-        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 4)
+
+        if (animal.getEnergy() > animal.getMaxEnergy() * 2 / 3 && surroundingFoxes < 4)
             shouldBreed = true;
 
-        if (surroundingFoxes > 6 && animal.getEnergy() > animal.getMaxEnergy()*2/3)
+        if (surroundingFoxes > 6 && animal.getEnergy() > animal.getMaxEnergy() * 2 / 3)
             shouldEat = false;
-                
+
+        // Breeds if conditions are met
         if (shouldBreed) {
             targetLocation = foxMind.getRandomBreedingLocation(world, animal);
             if (foxMind.checkValidity(world, animal, targetLocation))
                 return new BreedCommand(animal, targetLocation);
         }
+
+        // Eats if conditions are met
         if (rabbitFound && rabbitAdjacent && shouldEat) {
             rabbitFound = false;
             return new EatCommand(animal, rabbitToEat);
         }
 
+        // Chases rabbits if conditions are met
         if (rabbitFound && !rabbitAdjacent && shouldEat) {
             targetLocation = foxMind.getClosestMoveableLocation(rabbitToGo.getLocation(), animal.getLocation());
             if (foxMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
         }
 
+        // Go in a random straight direction
         if (straightMoves > 0) {
             straightMoves--;
             switch (tendency) {
@@ -104,15 +113,20 @@ public class FoxAI extends AbstractAI {
                 return new MoveCommand(animal, targetLocation);
         }
         newTendency--;
-        straightMoves = 4;
+        straightMoves = 4; // Number of times to move in that straight direction
+
+        // If invalid 5 times, choose a new direction
         if (newTendency < 0) {
             tendency = foxMind.getRandomNumber();
             newTendency = 5;
         }
+
+        // If invalid randomly choose a direction
         Location randomLocation = foxMind.getRandomMoveLocation(world, animal);
         if (foxMind.checkValidity(world, animal, randomLocation))
             return new MoveCommand(animal, randomLocation);
 
+        // If all moves are invalid, just wait.
         return new WaitCommand();
     }
 

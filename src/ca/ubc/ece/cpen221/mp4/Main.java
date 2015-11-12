@@ -41,6 +41,9 @@ public class Main {
     static final int INITIAL_DRAGONS = 1;
     static final int INITIAL_WIZARDS = INITIAL_GRASS / 30;
 
+    // Super hero
+    static final int INITIAL_WOLVERINES = 1;
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -68,7 +71,7 @@ public class Main {
         addDragons(world);
         addWizards(world);
         addPaladins(world);
-        // TODO: You may add your own creatures here!
+        addWolverines(world);
     }
 
     private void addGrass(World world) {
@@ -116,7 +119,7 @@ public class Main {
             world.addActor(bee);
         }
     }
-    
+
     private void addBears(World world) {
         BearAI bearAI = new BearAI();
         for (int i = 0; i < INITIAL_BEARS; i++) {
@@ -134,6 +137,16 @@ public class Main {
             Dragon dragon = new Dragon(dragonAI, loc);
             world.addItem(dragon);
             world.addActor(dragon);
+        }
+    }
+
+    private void addWolverines(World world) {
+        WolverineAI wolverineAI = new WolverineAI();
+        for (int i = 0; i < INITIAL_WOLVERINES; i++) {
+            Location loc = Util.getRandomEmptyLocation(world);
+            Wolverine wolverine = new Wolverine(wolverineAI, loc);
+            world.addItem(wolverine);
+            world.addActor(wolverine);
         }
     }
 
