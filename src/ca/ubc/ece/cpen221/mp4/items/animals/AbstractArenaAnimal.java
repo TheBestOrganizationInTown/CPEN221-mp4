@@ -26,7 +26,7 @@ public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 
 	private AI ai;
 
-	private Location location;
+	protected Location location;
 	private int energy = INITIAL_ENERGY;
 
 	@Override

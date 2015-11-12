@@ -36,9 +36,4 @@ public class Bear extends AbstractArenaAnimal{
     public String getName() {
        return "Bear";
     }
-    
-    @Override
-    public void moveTo(Location targetLocation) {
-        location = targetLocation;
-    }
 }
