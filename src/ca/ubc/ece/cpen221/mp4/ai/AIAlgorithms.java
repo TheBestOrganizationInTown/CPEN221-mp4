@@ -5,16 +5,41 @@ import java.util.*;
 import ca.ubc.ece.cpen221.mp4.ArenaWorld;
 import ca.ubc.ece.cpen221.mp4.Location;
 import ca.ubc.ece.cpen221.mp4.Util;
-import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.items.Item;
 import ca.ubc.ece.cpen221.mp4.items.animals.ArenaAnimal;
 
+/**
+ * Algorithms that are used by the various arena animals
+ * 
+ * @author RobynCastro
+ *
+ */
 public class AIAlgorithms {
 
+    /**
+     * Returns the manhattan distance between otherLocation and location
+     * 
+     * @param otherLocation
+     *            location to compare to.
+     * @param location
+     *            current location
+     * @return manhattan distance between the two parameters
+     */
     public int getDistance(Location otherLocation, Location location) {
         return (Math.abs(location.getX() - otherLocation.getX()) + Math.abs(location.getY() - otherLocation.getY()));
     }
 
+    /**
+     * Returns the locations furthest from the parameter toCompareTo
+     * 
+     * @param toCompareTo
+     *            location to compare to
+     * @param Location1
+     *            first location to be compared
+     * @param Location2
+     *            second location to be compared
+     * @return furthest location from toCompareTo
+     */
     public Location checkFurtherLocation(Location toCompareTo, Location Location1, Location Location2) {
         int Distance1 = getDistance(toCompareTo, Location1);
         int Distance2 = getDistance(toCompareTo, Location2);
@@ -25,6 +50,17 @@ public class AIAlgorithms {
         return Location1;
     }
 
+    /**
+     * Returns the closest location to parameter toCompareTo
+     * 
+     * @param toCompareTo
+     *            location to be compared to
+     * @param Location1
+     *            first location to be compared
+     * @param Location2
+     *            second location to be compared
+     * @return closest location from toCompareTo
+     */
     public Location checkClosestLocation(Location toCompareTo, Location Location1, Location Location2) {
         int Distance1 = getDistance(toCompareTo, Location1);
         int Distance2 = getDistance(toCompareTo, Location2);
@@ -33,6 +69,17 @@ public class AIAlgorithms {
         return Location1;
     }
 
+    /**
+     * Returns a random location adjacent to current location and furthest away
+     * from otherLocation
+     * 
+     * @param otherLocation
+     *            location to be further away from
+     * @param currentLocation
+     *            current location of the item
+     * @return furthest location from other location but still adjacent to
+     *         currentLocation
+     */
     public Location getFurthestMoveableLocation(Location otherLocation, Location currentLocation) {
         Location furthestLocation;
         List<Location> locations = getSurroundingFourLocations(currentLocation);
@@ -53,6 +100,17 @@ public class AIAlgorithms {
         return furthestLocation;
     }
 
+    /**
+     * Returns a random location adjacent to current location and closest to
+     * otherLocation
+     * 
+     * @param otherLocation
+     *            location to be closer to
+     * @param currentLocation
+     *            current location of the item
+     * @return closest location from other location but still adjacent to
+     *         currentLocation
+     */
     public Location getClosestMoveableLocation(Location otherLocation, Location currentLocation) {
         Location closestLocation;
         List<Location> locations = getSurroundingFourLocations(currentLocation);
@@ -74,6 +132,13 @@ public class AIAlgorithms {
         return closestLocation;
     }
 
+    /**
+     * Returns the 8 surrounding locations of the the passed item location
+     * 
+     * @param itemLocation
+     *            location of the item
+     * @return 8 surrounding locations of itemLocation in a list
+     */
     public List<Location> getSurroundingEightLocations(Location itemLocation) {
         List<Location> Locations = new LinkedList<Location>();
         Location North = new Location(itemLocation.getX(), itemLocation.getY() - 1);
@@ -96,6 +161,14 @@ public class AIAlgorithms {
         return Locations;
     }
 
+    /**
+     * Gets North, South, West, and East locations of itemLocation and returns
+     * them in a list
+     * 
+     * @param itemLocation
+     *            location of the item
+     * @return a list of North,South,West, and East locations
+     */
     public List<Location> getSurroundingFourLocations(Location itemLocation) {
         List<Location> Locations = new LinkedList<Location>();
         Location North = new Location(itemLocation.getX(), itemLocation.getY() - 1);
@@ -107,9 +180,20 @@ public class AIAlgorithms {
         Locations.add(West);
         Locations.add(East);
 
-        return Locations;
+        return new LinkedList<Location>(Locations);
     }
 
+    /**
+     * Checks whether the passed location is a valid location to target
+     * 
+     * @param world
+     *            the world being used
+     * @param animal
+     *            the animal doing the targeting
+     * @param targetLocation
+     *            the target location to be checked
+     * @return false if invalid, and true if valid
+     */
     public boolean checkValidity(ArenaWorld world, ArenaAnimal animal, Location targetLocation) {
         boolean isValid = true;
         List<Location> occupiedLocations = new LinkedList<Location>();
@@ -133,6 +217,17 @@ public class AIAlgorithms {
         return isValid;
     }
 
+    /**
+     * Returns the valid adjacent location of the passed animal
+     * 
+     * @param world
+     *            world the animal lives in
+     * @param animal
+     *            the animal that is checked
+     * @param surroundingLocations
+     *            the possible locations
+     * @return a list of all the valid surrounding locations
+     */
     public List<Location> getValidSurroundingLocations(ArenaWorld world, ArenaAnimal animal,
             List<Location> surroundingLocations) {
 
@@ -148,6 +243,18 @@ public class AIAlgorithms {
         return validSurroundingLocations;
     }
 
+    /**
+     * Returns a random location from the passed list of locations
+     * 
+     * @param world
+     *            world the animal lives in
+     * @param animal
+     *            animal that will use the random location
+     * @param locations
+     *            list of locations
+     * @return a random location from the list, but if list is empty return the
+     *         animals current location.
+     */
     public Location getRandomLocation(ArenaWorld world, ArenaAnimal animal, List<Location> locations) {
         int HIGH = locations.size();
         int randomIndex = 0;
@@ -159,6 +266,15 @@ public class AIAlgorithms {
         return animal.getLocation();
     }
 
+    /**
+     * Return a random adjacent location to the animal
+     * 
+     * @param world
+     *            the world the animal lives in
+     * @param animal
+     *            the animal to be adjacent to the chosen location
+     * @return a location
+     */
     public Location getRandomMoveLocation(ArenaWorld world, ArenaAnimal animal) {
         List<Location> surroundingLocations = getSurroundingFourLocations(animal.getLocation());
         List<Location> validSurroundingLocations = getValidSurroundingLocations(world, animal, surroundingLocations);
@@ -166,32 +282,74 @@ public class AIAlgorithms {
         return getRandomLocation(world, animal, validSurroundingLocations);
     }
 
+    /**
+     * Return a random location adjacent to the animal (including diagonals)
+     * 
+     * @param world
+     *            world the animal lives in
+     * @param animal
+     *            animal to be adjacent to chosen location
+     * @return a location
+     */
     public Location getRandomBreedingLocation(ArenaWorld world, ArenaAnimal animal) {
         List<Location> surroundingLocations = getSurroundingEightLocations(animal.getLocation());
         List<Location> validSurroundingLocations = getValidSurroundingLocations(world, animal, surroundingLocations);
 
         return getRandomLocation(world, animal, validSurroundingLocations);
     }
-    
-    public int getRandomNumber(){
+
+    /**
+     * Return a random integer between 0 and 3
+     * 
+     * @return an int
+     */
+    public int getRandomNumber() {
         int Random;
         Random randomize = new Random();
-        Random = randomize.nextInt(4);
-        return Random;
+        Random = randomize.nextInt(3);
+        return new Integer(Random);
     }
 
+    /**
+     * return north of the animal
+     * 
+     * @param animal
+     *            an ArenaAnimal
+     * @return a location
+     */
     public Location getNorth(ArenaAnimal animal) {
         return new Location(animal.getLocation().getX(), animal.getLocation().getY() - 1);
     }
 
+    /**
+     * return north of the animal
+     * 
+     * @param animal
+     *            an ArenaAnimal
+     * @return a location
+     */
     public Location getSouth(ArenaAnimal animal) {
         return new Location(animal.getLocation().getX(), animal.getLocation().getY() + 1);
     }
 
+    /**
+     * return north of the animal
+     * 
+     * @param animal
+     *            an ArenaAnimal
+     * @return a location
+     */
     public Location getWest(ArenaAnimal animal) {
         return new Location(animal.getLocation().getX() - 1, animal.getLocation().getY());
     }
 
+    /**
+     * return north of the animal
+     * 
+     * @param animal
+     *            an ArenaAnimal
+     * @return a location
+     */
     public Location getEast(ArenaAnimal animal) {
         return new Location(animal.getLocation().getX() + 1, animal.getLocation().getY());
     }

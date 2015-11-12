@@ -5,16 +5,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import ca.ubc.ece.cpen221.mp4.ArenaWorld;
-import ca.ubc.ece.cpen221.mp4.Direction;
 import ca.ubc.ece.cpen221.mp4.Location;
-import ca.ubc.ece.cpen221.mp4.Util;
-import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.commands.BreedCommand;
 import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.EatCommand;
 import ca.ubc.ece.cpen221.mp4.commands.MoveCommand;
 import ca.ubc.ece.cpen221.mp4.commands.WaitCommand;
-import ca.ubc.ece.cpen221.mp4.items.Grass;
 import ca.ubc.ece.cpen221.mp4.items.Item;
 import ca.ubc.ece.cpen221.mp4.items.animals.*;
 
@@ -46,8 +42,6 @@ public class FoxAI extends AbstractAI {
 
     @Override
     public Command getNextAction(ArenaWorld world, ArenaAnimal animal) {
-        // TODO: Change this. Implement your own AI to make decisions regarding
-        // the next action.
         shouldBreed = false;
         shouldEat = true;
         rabbitAdjacent = false;
@@ -60,7 +54,7 @@ public class FoxAI extends AbstractAI {
 
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            if (item instanceof Rabbit) {
+            if (item instanceof Rabbit && ((Rabbit) item).getEnergy() < 20) {
                 itemDistance = foxMind.getDistance(animal.getLocation(), item.getLocation());
                 if (itemDistance < rabbitDistance) {
                     rabbitFound = true;
@@ -77,10 +71,10 @@ public class FoxAI extends AbstractAI {
                 surroundingFoxLocation = item.getLocation();
             }
         }
-        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 2)
+        if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 4)
             shouldBreed = true;
 
-        if (surroundingFoxes > 3)
+        if (surroundingFoxes > 6 && animal.getEnergy() > animal.getMaxEnergy()*2/3)
             shouldEat = false;
         
         if (shouldBreed) {
@@ -88,12 +82,12 @@ public class FoxAI extends AbstractAI {
             if (foxMind.checkValidity(world, animal, targetLocation))
                 return new BreedCommand(animal, targetLocation);
         }
-        if (rabbitFound && rabbitAdjacent) {
+        if (rabbitFound && rabbitAdjacent && shouldEat) {
             rabbitFound = false;
             return new EatCommand(animal, rabbitToEat);
         }
 
-        if (rabbitFound && !rabbitAdjacent) {
+        if (rabbitFound && !rabbitAdjacent && shouldEat) {
             targetLocation = foxMind.getClosestMoveableLocation(rabbitToGo.getLocation(), animal.getLocation());
             if (foxMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
