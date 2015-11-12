@@ -76,7 +76,7 @@ public class FoxAI extends AbstractAI {
 
         if (surroundingFoxes > 6 && animal.getEnergy() > animal.getMaxEnergy()*2/3)
             shouldEat = false;
-        
+                
         if (shouldBreed) {
             targetLocation = foxMind.getRandomBreedingLocation(world, animal);
             if (foxMind.checkValidity(world, animal, targetLocation))

@@ -44,21 +44,8 @@ public class Tank extends Vehicle {
         }
 
         @Override
-        public Location getLocation() {
-            return location;
-        }
-        
-        @Override
         public String getName() {
             return "Tank";
         }
 
-        @Override
-        public void moveTo(Location targetLocation) {
-            location = targetLocation;
         }
-        @Override
-        public void loseEnergy(int energy) {
-           this.vehicleTotalled();
-            
-        }}

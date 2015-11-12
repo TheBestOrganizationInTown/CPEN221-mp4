@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import ca.ubc.ece.cpen221.mp4.ai.AIAlgorithms;
 import ca.ubc.ece.cpen221.mp4.ArenaWorld;
 import ca.ubc.ece.cpen221.mp4.Location;
 import ca.ubc.ece.cpen221.mp4.commands.BreedCommand;
@@ -60,6 +61,7 @@ public class RabbitAI extends AbstractAI {
         surroundingGrass = 0;
         grassDistance = 5;
         surroundingItems = world.searchSurroundings(animal);
+        tendencySet = false;
         AIAlgorithms rabbitMind = new AIAlgorithms();
 
         Iterator<Item> iterator = surroundingItems.iterator();
@@ -71,6 +73,7 @@ public class RabbitAI extends AbstractAI {
                 foxLocation = item.getLocation();
             }
             if (item instanceof Grass) {
+                surroundingGrass++;
                 itemDistance = rabbitMind.getDistance(animal.getLocation(), item.getLocation());
                 surroundingGrass++;
                 if (itemDistance < grassDistance) {
@@ -88,7 +91,12 @@ public class RabbitAI extends AbstractAI {
                 surroundingRabbitLocation = item.getLocation();
             }
         }
+<<<<<<< HEAD
         if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 1 && surroundingGrass > 1)
+=======
+        
+        if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 2)
+>>>>>>> 868879bf6c426365df283cd1a37f2415d1d6ecf4
             shouldBreed = true;
         if (surroundingRabbits > 0 || surroundingGrass < 2 || animal.getEnergy() < animal.getMaxEnergy()/8)
             shouldEat = false;
@@ -97,19 +105,24 @@ public class RabbitAI extends AbstractAI {
 
         if (foxFound && animal.getLocation().getDistance(foxLocation) < 3) {
             targetLocation = rabbitMind.getFurthestMoveableLocation(foxLocation, animal.getLocation());
-            if (rabbitMind.checkValidity(world, animal, targetLocation))
+            if (rabbitMind.checkValidity(world, animal, targetLocation)){
                 return new MoveCommand(animal, targetLocation);
+            }
         }
         if (shouldBreed) {
             tendency = rabbitMind.getRandomNumber();
             targetLocation = rabbitMind.getRandomBreedingLocation(world, animal);
-            if (rabbitMind.checkValidity(world, animal, targetLocation))
+            if (rabbitMind.checkValidity(world, animal, targetLocation)){
                 return new BreedCommand(animal, targetLocation);
+            }
+    
         }
         if (!shouldEat && surroundingRabbits > 0) {
             targetLocation = rabbitMind.getFurthestMoveableLocation(surroundingRabbitLocation, animal.getLocation());
-            if (rabbitMind.checkValidity(world, animal, targetLocation))
+            if (rabbitMind.checkValidity(world, animal, targetLocation)){
                 return new MoveCommand(animal, targetLocation);
+            }
+            
         }
         if (grassFound && grassAdjacent && shouldEat) {
             grassFound = false;
@@ -117,8 +130,9 @@ public class RabbitAI extends AbstractAI {
         }
         if (grassFound && !grassAdjacent && shouldEat) {
             targetLocation = rabbitMind.getClosestMoveableLocation(grassToGo.getLocation(), animal.getLocation());
-            if (rabbitMind.checkValidity(world, animal, targetLocation))
+            if (rabbitMind.checkValidity(world, animal, targetLocation)){
                 return new MoveCommand(animal, targetLocation);
+            }
         }
         if (straightMoves > 0 && tendencySet) {
             straightMoves--;

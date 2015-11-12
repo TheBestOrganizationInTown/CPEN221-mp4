@@ -24,7 +24,7 @@ public class Main {
 	static final int INITIAL_GRASS = X_DIM * Y_DIM / SPACES_PER_GRASS;
 	static final int INITIAL_GNATS = 0;
 	static final int INITIAL_RABBITS = INITIAL_GRASS / 4;
-	static final int INITIAL_FOXES = INITIAL_GRASS / 32;
+    static final int INITIAL_FOXES = INITIAL_GRASS / 32;
 	static final int INITIAL_TIGERS = INITIAL_GRASS / 32;
 	static final int INITIAL_BEARS = INITIAL_GRASS / 40;
 	static final int INITIAL_HYENAS = INITIAL_GRASS / 32;
