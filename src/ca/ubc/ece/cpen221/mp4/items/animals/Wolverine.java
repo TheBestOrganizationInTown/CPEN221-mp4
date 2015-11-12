@@ -6,10 +6,21 @@ import ca.ubc.ece.cpen221.mp4.Location;
 import ca.ubc.ece.cpen221.mp4.Util;
 import ca.ubc.ece.cpen221.mp4.items.LivingItem;
 
+/**
+ * Wolverine class. An AbstractArenaAnimal
+ * @author danger
+ *
+ */
 public class Wolverine extends AbstractArenaAnimal{
 
     private ImageIcon image;
-
+    /**
+     * Create a new {@link Wolverine} with at
+     * <code> Location </code>. The <code> Loation
+     * </code> must be valid and empty.
+     * @param Location
+     *            : the location where this Wolverine will be created
+     */
 public Wolverine( Location location){
     this.setINITIAL_ENERGY(120);
     this.setMAX_ENERGY(160);

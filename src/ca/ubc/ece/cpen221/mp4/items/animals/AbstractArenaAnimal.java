@@ -12,8 +12,8 @@ import ca.ubc.ece.cpen221.mp4.items.LivingItem;
 public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 																	// class for
 																	// other
-																	// arena
-																	// animals
+	//private fields representing characteristics of the			// arena
+	//animal														// animals
 	private int INITIAL_ENERGY;
 	private int MAX_ENERGY;
 	private int STRENGTH;
@@ -36,42 +36,84 @@ public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 		energy = Math.min(MAX_ENERGY, energy + food.getMeatCalories());
 	}
 
+	/**
+	 * the following set method gives values to INITIAL_ENERGY for
+	 * a new instance of an AbstractArenaAnimal
+	 * @param i
+	 */
+
 	protected void setINITIAL_ENERGY(int i) {
 		this.INITIAL_ENERGY = i;
 	}
-
+	/**
+     * the following set method gives values to energy for
+     * a new instance of an AbstractArenaAnimal, or to change this value later
+     * @param i
+     */
 	protected void setEnergy(int i) {
 		this.energy = i;
 	}
-
+	/**
+     * the following set method gives values to MAX_ENERGY for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setMAX_ENERGY(int i) {
 		this.MAX_ENERGY = i;
 	}
-
+	/**
+     * the following set method gives values to STRENGTH for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setSTRENGTH(int i) {
 		this.STRENGTH = i;
 	}
-
+	/**
+     * the following set method gives values to VIEW_RANGE for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setVIEW_RANGE(int i) {
 		this.VIEW_RANGE = i;
 	}
-
+	/**
+     * the following set method gives values to MIN_BREEDING_ENERGY for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setMIN_BREEDING_ENERGY(int i) {
 		this.MIN_BREEDING_ENERGY = i;
 	}
-
+	/**
+     * the following set method gives values to COOLDOWN for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setCOOLDOWN(int i) {
 		this.COOLDOWN = i;
 	}
-
+	/**
+     * the following set method gives values to location for
+     * a new instance of an AbstractArenaAnimal, or to change this value later
+     * @param i
+     */
 	protected void setLocation(Location l) {
 		this.location = l;
 	}
-	
+	/**
+     * the following set method gives values to image for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setImage(ImageIcon i){
 	    this.image = i;
 	}
-	
+	/**
+     * the following set method gives values to ai for
+     * a new instance of an AbstractArenaAnimal
+     * @param i
+     */
 	protected void setAI(AI ai){
 	    this.ai = ai;
 	}
@@ -143,8 +185,8 @@ public abstract class AbstractArenaAnimal implements ArenaAnimal { // abstract
 
 	@Override
 	public boolean isDead() {
-	    this.isDead = true;
-		return this.energy <= 0;
+	    this.isDead = (this.energy <= 0);
+		return isDead;
 	}
 
 	@Override

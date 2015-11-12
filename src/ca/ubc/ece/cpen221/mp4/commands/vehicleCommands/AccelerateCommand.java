@@ -1,6 +1,5 @@
 package ca.ubc.ece.cpen221.mp4.commands.vehicleCommands;
 
-import ca.ubc.ece.cpen221.mp4.Direction;
 import ca.ubc.ece.cpen221.mp4.World;
 import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.InvalidCommandException;
