@@ -46,7 +46,7 @@ public class AIAlgorithms {
             int randomIndex = randomize.nextInt(HIGH - LOW) + LOW;
             randomizedLocations.add(locations.remove(randomIndex));
         }
-        
+
         furthestLocation = checkFurtherLocation(otherLocation, randomizedLocations.get(0), randomizedLocations.get(1));
         furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, randomizedLocations.get(2));
         furthestLocation = checkFurtherLocation(otherLocation, furthestLocation, randomizedLocations.get(3));
@@ -152,7 +152,7 @@ public class AIAlgorithms {
         int HIGH = locations.size();
         int randomIndex = 0;
         Random randomize = new Random();
-        if (HIGH > 0){
+        if (HIGH > 0) {
             randomIndex = randomize.nextInt(HIGH);
             return locations.get(randomIndex);
         }
@@ -172,5 +172,27 @@ public class AIAlgorithms {
 
         return getRandomLocation(world, animal, validSurroundingLocations);
     }
+    
+    public int getRandomNumber(){
+        int Random;
+        Random randomize = new Random();
+        Random = randomize.nextInt(4);
+        return Random;
+    }
 
+    public Location getNorth(ArenaAnimal animal) {
+        return new Location(animal.getLocation().getX(), animal.getLocation().getY() - 1);
+    }
+
+    public Location getSouth(ArenaAnimal animal) {
+        return new Location(animal.getLocation().getX(), animal.getLocation().getY() + 1);
+    }
+
+    public Location getWest(ArenaAnimal animal) {
+        return new Location(animal.getLocation().getX() - 1, animal.getLocation().getY());
+    }
+
+    public Location getEast(ArenaAnimal animal) {
+        return new Location(animal.getLocation().getX() + 1, animal.getLocation().getY());
+    }
 }

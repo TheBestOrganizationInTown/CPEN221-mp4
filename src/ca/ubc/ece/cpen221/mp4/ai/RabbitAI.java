@@ -5,13 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import ca.ubc.ece.cpen221.mp4.ArenaWorld;
-import ca.ubc.ece.cpen221.mp4.Direction;
 import ca.ubc.ece.cpen221.mp4.Location;
-import ca.ubc.ece.cpen221.mp4.Util;
 import ca.ubc.ece.cpen221.mp4.commands.BreedCommand;
 import ca.ubc.ece.cpen221.mp4.commands.Command;
 import ca.ubc.ece.cpen221.mp4.commands.EatCommand;
-import ca.ubc.ece.cpen221.mp4.commands.InvalidCommandException;
 import ca.ubc.ece.cpen221.mp4.commands.MoveCommand;
 import ca.ubc.ece.cpen221.mp4.commands.WaitCommand;
 import ca.ubc.ece.cpen221.mp4.items.Grass;
@@ -38,6 +35,10 @@ public class RabbitAI extends AbstractAI {
     private Location targetLocation;
     private int surroundingRabbits;
     private Location surroundingRabbitLocation;
+    private int straightMoves;
+    private int tendency;
+    private boolean tendencySet;
+    private int newTendency;
 
     Set<Item> surroundingItems = new HashSet<Item>();
 
@@ -46,18 +47,21 @@ public class RabbitAI extends AbstractAI {
 
     @Override
     public Command getNextAction(ArenaWorld world, ArenaAnimal animal) {
-        // TODO: Change this. Implement your own AI rules.
         foxFound = false;
         shouldBreed = false;
         shouldEat = true;
         grassAdjacent = false;
         surroundingRabbits = 0;
         grassDistance = 5;
-
         surroundingItems = world.searchSurroundings(animal);
         AIAlgorithms rabbitMind = new AIAlgorithms();
 
         Iterator<Item> iterator = surroundingItems.iterator();
+
+        if (!tendencySet) {
+            tendency = rabbitMind.getRandomNumber();
+            tendencySet = true;
+        }
 
         while (iterator.hasNext()) {
             Item item = iterator.next();
@@ -82,11 +86,10 @@ public class RabbitAI extends AbstractAI {
                 surroundingRabbitLocation = item.getLocation();
             }
         }
-
-        if (animal.getEnergy() == animal.getMaxEnergy())
+        if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 2)
             shouldBreed = true;
 
-        if (surroundingRabbits > 1)
+        if (surroundingRabbits > 2)
             shouldEat = false;
 
         if (foxFound && animal.getLocation().getDistance(foxLocation) < 3) {
@@ -95,7 +98,7 @@ public class RabbitAI extends AbstractAI {
                 return new MoveCommand(animal, targetLocation);
         }
         if (shouldBreed) {
-            System.out.println("Breeding");
+            tendency = rabbitMind.getRandomNumber();
             targetLocation = rabbitMind.getRandomBreedingLocation(world, animal);
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new BreedCommand(animal, targetLocation);
@@ -105,7 +108,7 @@ public class RabbitAI extends AbstractAI {
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
         }
-        if (grassFound && grassAdjacent) {
+        if (grassFound && grassAdjacent && shouldEat) {
             grassFound = false;
             return new EatCommand(animal, grassToEat);
         }
@@ -114,7 +117,31 @@ public class RabbitAI extends AbstractAI {
             if (rabbitMind.checkValidity(world, animal, targetLocation))
                 return new MoveCommand(animal, targetLocation);
         }
+        if (straightMoves > 0) {
+            straightMoves--;
+            switch (tendency) {
+            case 0:
+                targetLocation = rabbitMind.getNorth(animal);
+            case 1:
+                targetLocation = rabbitMind.getSouth(animal);
+            case 2:
+                targetLocation = rabbitMind.getEast(animal);
+            case 3:
+                targetLocation = rabbitMind.getWest(animal);
+
+            }
+            if (rabbitMind.checkValidity(world, animal, targetLocation))
+                return new MoveCommand(animal, targetLocation);
+        }
+        newTendency--;
+        straightMoves = 4;
+        if (newTendency < 0) {
+            tendency = rabbitMind.getRandomNumber();
+            newTendency = 5;
+        }
         Location randomLocation = rabbitMind.getRandomMoveLocation(world, animal);
-        return new MoveCommand(animal, randomLocation);
+        if (rabbitMind.checkValidity(world, animal, randomLocation))
+            return new MoveCommand(animal, randomLocation);
+        return new WaitCommand();
     }
 }
