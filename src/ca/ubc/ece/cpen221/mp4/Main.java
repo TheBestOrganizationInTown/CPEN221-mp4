@@ -6,6 +6,7 @@ import ca.ubc.ece.cpen221.mp4.ai.*;
 import ca.ubc.ece.cpen221.mp4.items.Gardener;
 import ca.ubc.ece.cpen221.mp4.items.Grass;
 import ca.ubc.ece.cpen221.mp4.items.animals.*;
+import ca.ubc.ece.cpen221.mp4.items.others.*;
 import ca.ubc.ece.cpen221.mp4.staff.WorldImpl;
 import ca.ubc.ece.cpen221.mp4.staff.WorldUI;
 
@@ -64,6 +65,9 @@ public class Main {
         addFoxes(world);
         addBees(world);
         addBears(world);
+        addDragons(world);
+        addWizards(world);
+        addPaladins(world);
         // TODO: You may add your own creatures here!
     }
 
@@ -124,32 +128,29 @@ public class Main {
     }
 
     private void addDragons(World world) {
-        BeeAI beeAI = new BeeAI();
-        for (int i = 0; i < INITIAL_BEES; i++) {
+        for (int i = 0; i < INITIAL_DRAGONS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Bee bee = new Bee(beeAI, loc);
-            world.addItem(bee);
-            world.addActor(bee);
+            Dragon dragon = new Dragon(loc);
+            world.addItem(dragon);
+            world.addActor(dragon);
         }
     }
 
     private void addPaladins(World world) {
-        BeeAI beeAI = new BeeAI();
-        for (int i = 0; i < INITIAL_BEES; i++) {
+        for (int i = 0; i < INITIAL_PALADINS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Bee bee = new Bee(beeAI, loc);
-            world.addItem(bee);
-            world.addActor(bee);
+            Paladin paladin = new Paladin(loc);
+            world.addItem(paladin);
+            world.addActor(paladin);
         }
     }
 
     private void addWizards(World world) {
-        BeeAI beeAI = new BeeAI();
-        for (int i = 0; i < INITIAL_BEES; i++) {
+        for (int i = 0; i < INITIAL_WIZARDS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Bee bee = new Bee(beeAI, loc);
-            world.addItem(bee);
-            world.addActor(bee);
+            Wizard wizard = new Wizard(loc);
+            world.addItem(wizard);
+            world.addActor(wizard);
         }
     }
 }
