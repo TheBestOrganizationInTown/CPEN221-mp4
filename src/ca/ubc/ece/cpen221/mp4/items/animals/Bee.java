@@ -21,6 +21,7 @@ public class Bee extends AbstractArenaAnimal {
     private static final int COOLDOWN = 1;
     private static final ImageIcon beeImage = Util.loadImage("bee.gif");
     
+    
     private final AI ai;
 
     private Location location;
@@ -46,6 +47,7 @@ public class Bee extends AbstractArenaAnimal {
         this.setVIEW_RANGE(VIEW_RANGE);
         this.setSTRENGTH(STRENGTH);
         this.ai = beeAI;
+        
     }
 
     @Override
@@ -61,4 +63,5 @@ public class Bee extends AbstractArenaAnimal {
     public String getName() {
         return "Bee";
     }
+    
 }

@@ -322,7 +322,7 @@ public class AIAlgorithms {
     }
 
     /**
-     * return north of the animal
+     * return south of the animal
      * 
      * @param animal
      *            an ArenaAnimal
@@ -333,7 +333,7 @@ public class AIAlgorithms {
     }
 
     /**
-     * return north of the animal
+     * return west of the animal
      * 
      * @param animal
      *            an ArenaAnimal
@@ -344,7 +344,7 @@ public class AIAlgorithms {
     }
 
     /**
-     * return north of the animal
+     * return east of the animal
      * 
      * @param animal
      *            an ArenaAnimal

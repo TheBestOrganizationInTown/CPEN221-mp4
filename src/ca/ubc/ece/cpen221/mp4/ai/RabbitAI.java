@@ -25,20 +25,20 @@ public class RabbitAI extends AbstractAI {
 
     private boolean shouldEat;
     private boolean foxFound;
-    private Location foxLocation;
     private boolean grassFound;
     private boolean shouldBreed;
+    private boolean grassAdjacent;
+    private boolean tendencySet;
+    private Location foxLocation;
+    private Location targetLocation;
+    private Location surroundingRabbitLocation;
     private Item grassToGo;
     private Item grassToEat;
-    private boolean grassAdjacent;
     private int grassDistance;
     private int itemDistance;
-    private Location targetLocation;
     private int surroundingRabbits;
-    private Location surroundingRabbitLocation;
     private int straightMoves;
     private int tendency;
-    private boolean tendencySet;
     private int newTendency;
     private int surroundingGrass;
     private int north;
@@ -75,7 +75,6 @@ public class RabbitAI extends AbstractAI {
             if (item instanceof Grass) {
                 surroundingGrass++;
                 itemDistance = rabbitMind.getDistance(animal.getLocation(), item.getLocation());
-                surroundingGrass++;
                 if (itemDistance < grassDistance) {
                     grassFound = true;
                     grassToGo = item;
@@ -91,12 +90,9 @@ public class RabbitAI extends AbstractAI {
                 surroundingRabbitLocation = item.getLocation();
             }
         }
-<<<<<<< HEAD
         if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 1 && surroundingGrass > 1)
-=======
         
         if (animal.getEnergy() == animal.getMaxEnergy() && surroundingRabbits < 2)
->>>>>>> 868879bf6c426365df283cd1a37f2415d1d6ecf4
             shouldBreed = true;
         if (surroundingRabbits > 0 || surroundingGrass < 2 || animal.getEnergy() < animal.getMaxEnergy()/8)
             shouldEat = false;

@@ -21,16 +21,14 @@ public class FoxAI extends AbstractAI {
 
     private boolean shouldEat;
     private boolean rabbitFound;
-    private Location foxLocation;
     private boolean shouldBreed;
+    private boolean rabbitAdjacent;
+    private Location targetLocation;
     private Item rabbitToGo;
     private Item rabbitToEat;
-    private boolean rabbitAdjacent;
     private int rabbitDistance;
     private int itemDistance;
-    private Location targetLocation;
     private int surroundingFoxes;
-    private Location surroundingFoxLocation;
     private int straightMoves;
     private int tendency;
     private int newTendency;
@@ -59,16 +57,12 @@ public class FoxAI extends AbstractAI {
                 if (itemDistance < rabbitDistance) {
                     rabbitFound = true;
                     rabbitToGo = item;
-                    rabbitDistance = itemDistance;
+                    rabbitDistance = new Integer(itemDistance);
                 }
             }
             if (item.getLocation().getDistance(animal.getLocation()) == 1 && item instanceof Rabbit) {
                 rabbitAdjacent = true;
                 rabbitToEat = item;
-            }
-            if (item instanceof Fox) {
-                surroundingFoxes++;
-                surroundingFoxLocation = item.getLocation();
             }
         }
         if (animal.getEnergy() > animal.getMaxEnergy()*2/3 && surroundingFoxes < 4)
