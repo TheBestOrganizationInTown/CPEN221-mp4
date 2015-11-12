@@ -6,15 +6,23 @@ import javax.swing.ImageIcon;
 
 import ca.ubc.ece.cpen221.mp4.Location;
 import ca.ubc.ece.cpen221.mp4.Util;
+import ca.ubc.ece.cpen221.mp4.ai.AI;
 import ca.ubc.ece.cpen221.mp4.items.LivingItem;
-import ca.ubc.ece.cpen221.mp4.items.animals.Wolverine;
 /**
  * Paladin class. An AbstractArenaAnimal
  * @author danger
  *
  */
 public class Paladin extends AbstractMedievalCreature {
-    private ImageIcon image;
+    private static final int INITIAL_ENERGY = 190;
+    private static final int MAX_ENERGY = 260;
+    private static final int STRENGTH = 160;
+    private static final int MIN_BREEDING_ENERGY = 100;
+    private static final int VIEW_RANGE = 7;
+    private static final int COOLDOWN = 3;
+    private static final ImageIcon paladinImage = Util.loadImage("paladin.gif");
+    
+    private final AI ai;
     /**
      * Create a new {@link Paladin} with at
      * <code> Location </code>. The <code> Loation
@@ -22,26 +30,31 @@ public class Paladin extends AbstractMedievalCreature {
      * @param Location
      *            : the location where this Paladin will be created
      */
-    public Paladin(Location location) {
-        this.setINITIAL_ENERGY(190);
-        this.setMAX_ENERGY(260);
-        this.setSTRENGTH(160);
-        this.setVIEW_RANGE(7);
-        this.setMIN_BREEDING_ENERGY(100);
-        this.setCOOLDOWN(3);
+    public Paladin(AI paladinAI, Location initialLocation) {
         this.setMAX_MAGIC(300);
         this.setBravery(65);
         Random random = new Random();
         this.setIsEvil(false);
         this.setMagic();
         this.setTreasure(random.nextInt(140));
-        this.setLocation(location);
-        this.image = Util.loadImage("unknown.gif");
+        
+        this.setAI(paladinAI);
+        this.setImage(paladinImage);
+        this.setEnergy(INITIAL_ENERGY);
+        this.setINITIAL_ENERGY(INITIAL_ENERGY);
+        this.setCOOLDOWN(COOLDOWN);
+        this.setMAX_ENERGY(MAX_ENERGY);
+        this.setLocation(initialLocation);
+        this.setMIN_BREEDING_ENERGY(MIN_BREEDING_ENERGY);
+        this.setVIEW_RANGE(VIEW_RANGE);
+        this.setSTRENGTH(STRENGTH);
+        
+        this.ai = paladinAI;
     }
 
     @Override
     public LivingItem breed() {
-        Paladin child = new Paladin(getLocation());
+        Paladin child = new Paladin(this.ai, getLocation());
         child.setEnergy(getEnergy() / 2);
         this.setEnergy(getEnergy() / 2);
         return child;
@@ -50,9 +63,5 @@ public class Paladin extends AbstractMedievalCreature {
     @Override
     public String getName() {
         return "Paladin";
-    }
-    @Override
-    public int getMovingRange() {
-        return 4; // Paladins can move further than regular animals
     }
 }

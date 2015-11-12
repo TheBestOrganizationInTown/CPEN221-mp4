@@ -128,27 +128,30 @@ public class Main {
     }
 
     private void addDragons(World world) {
+        DragonAI dragonAI = new DragonAI();
         for (int i = 0; i < INITIAL_DRAGONS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Dragon dragon = new Dragon(loc);
+            Dragon dragon = new Dragon(dragonAI, loc);
             world.addItem(dragon);
             world.addActor(dragon);
         }
     }
 
     private void addPaladins(World world) {
+        PaladinAI paladinAI = new PaladinAI();
         for (int i = 0; i < INITIAL_PALADINS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Paladin paladin = new Paladin(loc);
+            Paladin paladin = new Paladin(paladinAI, loc);
             world.addItem(paladin);
             world.addActor(paladin);
         }
     }
 
     private void addWizards(World world) {
+        WizardAI wizardAI = new WizardAI();
         for (int i = 0; i < INITIAL_WIZARDS; i++) {
             Location loc = Util.getRandomEmptyLocation(world);
-            Wizard wizard = new Wizard(loc);
+            Wizard wizard = new Wizard(wizardAI, loc);
             world.addItem(wizard);
             world.addActor(wizard);
         }
